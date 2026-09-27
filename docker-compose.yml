@@ -1,0 +1,8 @@
+services:
+  builder:
+    build: .
+    image: onx-apk-builder:local
+    volumes:
+      - ./out:/app/out
+    # override command, e.g.:
+    # docker compose run --rm builder --url https://dbymo.online/ --name DEMOBOY --wlb DBY --out /app/out

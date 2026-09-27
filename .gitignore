@@ -1,0 +1,17 @@
+tmp/
+out/
+.bundle/
+vendor/bundle/
+*.apk
+!android_template/**/*.png
+.local.properties
+**/local.properties
+.idea/
+.vscode/
+*.iml
+.DS_Store
+.env
+.env.*
+*.log
+android_template/**/build/
+android_template/**/.gradle/
