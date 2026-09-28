@@ -16,6 +16,8 @@ module OnxApkBuilder
         name: 'Membersite',
         package: nil,
         wlb: nil,
+        bootstrap_url: nil,
+        bootstrap_base_url: ENV['APK_BOOTSTRAP_BASE_URL'] || ENV['API_BASE_URL'],
         out: File.join(ROOT, 'out')
       }
     end
@@ -27,6 +29,8 @@ module OnxApkBuilder
         name: @options[:name],
         package: @options[:package],
         wlb: @options[:wlb],
+        bootstrap_url: @options[:bootstrap_url],
+        bootstrap_base_url: @options[:bootstrap_base_url],
         out_dir: @options[:out]
       ).execute!
 
@@ -49,10 +53,12 @@ module OnxApkBuilder
     def parse!
       parser = OptionParser.new do |opts|
         opts.banner = 'Usage: bin/build-apk --url URL [options]'
-        opts.on('--url URL', 'Membersite URL (required)') { |v| @options[:url] = v }
+        opts.on('--url URL', 'Membersite URL / offline fallback (required)') { |v| @options[:url] = v }
         opts.on('--name NAME', 'App display name') { |v| @options[:name] = v }
         opts.on('--package PKG', 'Android applicationId') { |v| @options[:package] = v }
-        opts.on('--wlb WLB', 'WLB identifier used for default package slug') { |v| @options[:wlb] = v }
+        opts.on('--wlb WLB', 'WLB identifier (package slug + bootstrap key)') { |v| @options[:wlb] = v }
+        opts.on('--bootstrap-url URL', 'Full bootstrap endpoint URL') { |v| @options[:bootstrap_url] = v }
+        opts.on('--bootstrap-base-url URL', 'ONX origin used to build bootstrap URL') { |v| @options[:bootstrap_base_url] = v }
         opts.on('--out DIR', 'Output directory for APK') { |v| @options[:out] = v }
         opts.on('-h', '--help', 'Show help') do
           puts opts

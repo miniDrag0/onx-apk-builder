@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Membersite</string>
+    <string name="wlb">app</string>
+    <string name="bootstrap_url"></string>
     <string name="membersite_url">https://example.com/</string>
 </resources>
