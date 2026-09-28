@@ -184,6 +184,8 @@ module OnxApkBuilder
               <string name="wlb">#{xml_escape(wlb_key)}</string>
               <string name="bootstrap_url">#{xml_escape(resolved_bootstrap_url)}</string>
               <string name="membersite_url">#{xml_escape(@url)}</string>
+              <string name="membersite_unreachable">Situs tidak bisa diakses. Menunggu URL baru atau coba lagi.</string>
+              <string name="retry">Coba lagi</string>
           </resources>
         XML
       )

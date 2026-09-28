@@ -24,8 +24,16 @@ On launch the app:
 3. Caches `membersite_url`
 4. Loads WebView
 
-Changing membersite URL in ONX updates the next app open — **no APK rebuild**.
+While the app stays open (no kill required):
+
+1. Soft bootstrap on `onResume`
+2. Poll bootstrap every ~90s in foreground
+3. WebView main-frame error → retry panel + re-fetch bootstrap
+4. If ONX returns a **new** URL → WebView loads it
+
+Changing membersite URL in ONX updates users already in the app — **no APK rebuild**.
 Native icon/splash still come from assets scraped at **build** time.
+
 
 ## Pipeline stages
 

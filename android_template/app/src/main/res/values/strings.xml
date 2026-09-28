@@ -4,4 +4,6 @@
     <string name="wlb">app</string>
     <string name="bootstrap_url"></string>
     <string name="membersite_url">https://example.com/</string>
+    <string name="membersite_unreachable">Situs tidak bisa diakses. Menunggu URL baru atau coba lagi.</string>
+    <string name="retry">Coba lagi</string>
 </resources>
