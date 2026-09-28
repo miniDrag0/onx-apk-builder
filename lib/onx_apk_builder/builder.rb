@@ -7,6 +7,7 @@ require 'json'
 require 'pathname'
 require 'securerandom'
 require 'rbconfig'
+require 'erb'
 require 'nokogiri'
 
 module OnxApkBuilder
@@ -21,11 +22,13 @@ module OnxApkBuilder
 
     Result = Struct.new(:apk_path, :app_name, :package_name, :membersite_url, :stages, keyword_init: true)
 
-    def initialize(url:, name: nil, package: nil, wlb: nil, out_dir: nil, workdir: nil, on_stage: nil)
+    def initialize(url:, name: nil, package: nil, wlb: nil, bootstrap_url: nil, bootstrap_base_url: nil, out_dir: nil, workdir: nil, on_stage: nil)
       @url = normalize_url(url)
       @name = (name.presence || 'Membersite').to_s[0, 30]
       @wlb = wlb.to_s
       @package = package.presence || default_package
+      @bootstrap_url = bootstrap_url.to_s.strip
+      @bootstrap_base_url = bootstrap_base_url.to_s.strip.sub(%r{/+\z}, '')
       @out_dir = Pathname(out_dir || File.join(ROOT, 'out'))
       @workdir = Pathname(workdir || File.join(ROOT, 'tmp', "build_#{SecureRandom.hex(6)}"))
       @on_stage = on_stage || method(:default_stage_logger)
@@ -178,10 +181,26 @@ module OnxApkBuilder
           <?xml version="1.0" encoding="utf-8"?>
           <resources>
               <string name="app_name">#{xml_escape(@name)}</string>
+              <string name="wlb">#{xml_escape(wlb_key)}</string>
+              <string name="bootstrap_url">#{xml_escape(resolved_bootstrap_url)}</string>
               <string name="membersite_url">#{xml_escape(@url)}</string>
+              <string name="membersite_unreachable">Situs tidak bisa diakses. Menunggu URL baru atau coba lagi.</string>
+              <string name="retry">Coba lagi</string>
           </resources>
         XML
       )
+    end
+
+    def wlb_key
+      value = @wlb.to_s.strip
+      value.empty? ? 'app' : value
+    end
+
+    def resolved_bootstrap_url
+      return @bootstrap_url unless @bootstrap_url.empty?
+      return '' if @bootstrap_base_url.empty?
+
+      "#{@bootstrap_base_url}/api/v1/apps/#{ERB::Util.url_encode(wlb_key)}/bootstrap"
     end
 
     def generate_icons!(project, logo_path)
