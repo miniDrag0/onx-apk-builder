@@ -80,6 +80,11 @@ public class MainActivity extends AppCompatActivity {
     settings.setBuiltInZoomControls(false);
     settings.setDisplayZoomControls(false);
     settings.setMediaPlaybackRequiresUserGesture(false);
+    // Identify as in-app WebView so membersite can treat us as installed app,
+    // and keep a mobile Chrome baseline for layout width.
+    settings.setUserAgentString(
+        settings.getUserAgentString() + " ONXMembersiteApp/1.0"
+    );
 
     view.setWebChromeClient(new WebChromeClient());
     view.setWebViewClient(new WebViewClient() {
@@ -95,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
       @Override
       public void onPageFinished(WebView view, String url) {
-        // Keep panel hidden on success; error path shows it explicitly.
+        hideMembersiteAppDownloadChrome(view);
       }
 
       @Override
@@ -116,6 +121,35 @@ public class MainActivity extends AppCompatActivity {
         handleMembersiteLoadFailure();
       }
     });
+  }
+
+  /**
+   * Membersite often shows a sticky "Download APK / Aplikasi Mobile" bar when
+   * opened in a browser. Inside our installed WebView that bar is redundant —
+   * shrink/hide common promo chrome so content uses full width.
+   */
+  private void hideMembersiteAppDownloadChrome(WebView view) {
+    if (view == null) return;
+    String js =
+        "(function(){"
+            + "try{"
+            + "var nodes=document.querySelectorAll('body *');"
+            + "for(var i=0;i<nodes.length;i++){"
+            + "var el=nodes[i];"
+            + "if(!el||!el.textContent) continue;"
+            + "var t=(el.textContent||'').replace(/\\s+/g,' ').trim();"
+            + "if(t.length>120) continue;"
+            + "var hit=/Aplikasi Mobile|Download App|Unduh Aplikasi|\\bUNDUH\\b/i.test(t);"
+            + "if(!hit) continue;"
+            + "var box=el.closest('header,nav,section,div,aside')||el;"
+            + "var style=window.getComputedStyle(box);"
+            + "var fixed=style.position==='fixed'||style.position==='sticky';"
+            + "var topish=(box.getBoundingClientRect().top<120);"
+            + "if(fixed||topish){box.style.setProperty('display','none','important');}"
+            + "}"
+            + "}catch(e){}"
+            + "})();";
+    view.evaluateJavascript(js, null);
   }
 
   private String cachedOrFallbackUrl() {

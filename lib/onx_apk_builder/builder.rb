@@ -291,8 +291,41 @@ module OnxApkBuilder
           .call(destination: destination.to_s)
         return
       rescue LoadError, StandardError
+        # fall through
+      end
+
+      # Pure-Ruby fallback (no ImageMagick / libvips required).
+      # Avoids copying a wide banner logo into square mipmaps unchanged
+      # (that made icons look "sempit" / stretched on the launcher).
+      begin
+        resize_to_square_chunky(source, destination, size)
+        return
+      rescue LoadError, StandardError => e
+        warn("[onx-apk-builder] chunky resize failed: #{e.message}")
         FileUtils.cp(source, destination)
       end
+    end
+
+    def resize_to_square_chunky(source, destination, size)
+      require 'chunky_png'
+
+      src = ChunkyPNG::Image.from_file(source.to_s)
+      # Fit inside square, keep aspect ratio, pad with dark background.
+      scale = [size.to_f / src.width, size.to_f / src.height].min
+      new_w = [1, (src.width * scale).round].max
+      new_h = [1, (src.height * scale).round].max
+      resized =
+        if src.respond_to?(:resample_bilinear)
+          src.resample_bilinear(new_w, new_h)
+        else
+          src.resample_nearest_neighbor(new_w, new_h)
+        end
+
+      canvas = ChunkyPNG::Image.new(size, size, ChunkyPNG::Color.rgb(11, 11, 15))
+      offset_x = ((size - new_w) / 2.0).round
+      offset_y = ((size - new_h) / 2.0).round
+      canvas.compose!(resized, offset_x, offset_y)
+      canvas.save(destination.to_s)
     end
 
     def xml_escape(value)

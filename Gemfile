@@ -3,3 +3,4 @@
 source 'https://rubygems.org'
 
 gem 'nokogiri', '~> 1.16'
+gem 'chunky_png', '~> 1.4'
