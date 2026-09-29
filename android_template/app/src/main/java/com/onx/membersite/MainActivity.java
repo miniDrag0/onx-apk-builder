@@ -7,8 +7,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
@@ -358,34 +356,6 @@ public class MainActivity extends AppCompatActivity {
     resumed = false;
     stopForegroundPoll();
     super.onPause();
-  }
-
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    menu.add(0, 1, 0, "Reload WebView");
-    menu.add(0, 2, 1, "Buka Membersite");
-    menu.add(0, 3, 2, "Refresh URL");
-    return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    if (webView == null) return super.onOptionsItemSelected(item);
-    if (item.getItemId() == 1) {
-      webView.reload();
-      return true;
-    }
-    if (item.getItemId() == 2) {
-      if (membersiteUrl != null && !membersiteUrl.isEmpty()) {
-        webView.loadUrl(membersiteUrl);
-      }
-      return true;
-    }
-    if (item.getItemId() == 3) {
-      softRefreshMembersiteUrl(true);
-      return true;
-    }
-    return super.onOptionsItemSelected(item);
   }
 
   @Override
