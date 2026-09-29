@@ -123,8 +123,8 @@ module OnxApkBuilder
     def extract_and_download_assets(html)
       doc = Nokogiri::HTML(html)
       logo_url = absolutize(
-        pick_attr(doc, 'img[alt*="ogo" i]', 'src') ||
-          pick_attr(doc, 'img.logo, .logo img, .site-header img, header img', 'src')
+        pick_attr(doc, 'img.logo, .logo img, .site-header img, header img', 'src') ||
+          find_logo_src(doc)
       )
       favicon_url = absolutize(
         pick_attr(doc, 'link[rel="icon"], link[rel="shortcut icon"], link[rel*="icon"]', 'href')
@@ -153,6 +153,14 @@ module OnxApkBuilder
     def pick_attr(doc, css, attr)
       node = doc.at_css(css)
       node && node[attr]
+    end
+
+    def find_logo_src(doc)
+      doc.css('img').each do |img|
+        alt = img['alt'].to_s.downcase
+        return img['src'] if alt.include?('logo') || alt.include?('ogo')
+      end
+      nil
     end
 
     def prepare_project!(assets)
@@ -238,7 +246,7 @@ module OnxApkBuilder
 
       stdout, status = Open3.capture2e(env, *command, chdir: project.to_s)
       apk = project.join('app/build/outputs/apk/debug/app-debug.apk')
-      raise "Gradle build failed:\n#{stdout.to_s[-4000, 4000]}" unless status.success? && apk.file?
+      raise "Gradle build failed:\n#{stdout.to_s[-4000..-1]}" unless status.success? && apk.file?
 
       dest = @workdir.join("#{@package}.apk")
       FileUtils.cp(apk, dest)

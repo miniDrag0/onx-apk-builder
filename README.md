@@ -52,7 +52,7 @@ Each stage prints a JSON line:
 Final success:
 
 ```json
-{"event":"done","apk_path":"out/com.onx.membersite.dby.apk","app_name":"DEMOBOY","package_name":"com.onx.membersite.dby","membersite_url":"https://dbymo.online/"}
+{"event":"done","apk_path":"out/com.onx.membersite.EXW.apk","app_name":"ExampleApp","package_name":"com.onx.membersite.EXW","membersite_url":"https://example.com/"}
 ```
 
 ## Requirements (host)
@@ -71,9 +71,9 @@ export JAVA_HOME=...
 export ANDROID_HOME=...
 
 bin/build-apk \
-  --url https://dbymo.online/ \
-  --name DEMOBOY \
-  --wlb DBY \
+  --url https://example.com/ \
+  --name ExampleApp \
+  --wlb EXW \
   --bootstrap-base-url https://your-onx-host \
   --out ./out
 ```
@@ -82,9 +82,9 @@ Or pass the full endpoint:
 
 ```bash
 bin/build-apk \
-  --url https://dbymo.online/ \
-  --wlb DBY \
-  --bootstrap-url https://your-onx-host/api/v1/apps/DBY/bootstrap \
+  --url https://example.com/ \
+  --wlb EXW \
+  --bootstrap-url https://your-onx-host/api/v1/apps/EXW/bootstrap \
   --out ./out
 ```
 
@@ -106,9 +106,9 @@ Options:
 docker build -t onx-apk-builder .
 
 docker run --rm -v "$PWD/out:/app/out" onx-apk-builder \
-  --url https://dbymo.online/ \
-  --name DEMOBOY \
-  --wlb DBY \
+  --url https://example.com/ \
+  --name ExampleApp \
+  --wlb EXW \
   --bootstrap-base-url https://your-onx-host \
   --out /app/out
 ```
