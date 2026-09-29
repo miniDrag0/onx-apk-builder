@@ -4,9 +4,13 @@
 root = File.expand_path('..', __dir__)
 $LOAD_PATH.unshift(File.join(root, 'lib'))
 
+# Bundler may abort/exit on Windows when optional gems are missing.
+# Keep build runnable with system gems (e.g. `gem install nokogiri`).
 begin
   require 'bundler/setup'
-rescue LoadError, StandardError => e
+rescue Exception => e
+  raise if e.is_a?(Interrupt) || e.is_a?(SignalException) || e.is_a?(NoMemoryError)
+
   warn("[onx-apk-builder] bundler/setup skipped: #{e.message}")
 end
 
