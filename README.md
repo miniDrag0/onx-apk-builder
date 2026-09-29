@@ -22,7 +22,7 @@ Each stage prints a JSON line:
 Final success:
 
 ```json
-{"event":"done","apk_path":"out/com.onx.membersite.dby.apk","app_name":"DEMOBOY","package_name":"com.onx.membersite.dby","membersite_url":"https://dbymo.online/"}
+{"event":"done","apk_path":"out/com.onx.membersite.ex.apk","app_name":"Example","package_name":"com.onx.membersite.ex","membersite_url":"https://example.com/"}
 ```
 
 ## Requirements (host)
@@ -41,9 +41,9 @@ export JAVA_HOME=...
 export ANDROID_HOME=...
 
 bin/build-apk \
-  --url https://dbymo.online/ \
-  --name DEMOBOY \
-  --wlb DBY \
+  --url https://example.com/ \
+  --name Example \
+  --wlb EX \
   --out ./out
 ```
 
@@ -63,9 +63,9 @@ Options:
 docker build -t onx-apk-builder .
 
 docker run --rm -v "$PWD/out:/app/out" onx-apk-builder \
-  --url https://dbymo.online/ \
-  --name DEMOBOY \
-  --wlb DBY \
+  --url https://example.com/ \
+  --name Example \
+  --wlb EX \
   --out /app/out
 ```
 
